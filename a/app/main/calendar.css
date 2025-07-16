@@ -1,0 +1,36 @@
+/* calendar.css */
+.react-calendar {
+    border: none;
+    font-family: 'Pretendard', sans-serif;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .react-calendar__tile--now {
+    background: #e6f7ff;
+    border-radius: 6px;
+  }
+  
+  .react-calendar__tile--active {
+    background: #91caff;
+    color: white;
+  }
+  
+  .calendar-wrapper {
+    padding: 1rem;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .calendar-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+  
+  .visit-info {
+    margin-top: 12px;
+    color: #888;
+  }
+  
