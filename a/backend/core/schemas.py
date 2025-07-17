@@ -4,4 +4,4 @@ from pydantic import BaseModel
 
 class AdminLoginRequest(BaseModel):
     admin_id: str
-    password: str
+    admin_pw: str

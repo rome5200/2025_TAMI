@@ -26,9 +26,13 @@ app.add_middleware(
 )
 
 # 관리자 로그인 라우터 등록
-app.include_router(admin_router.router, prefix="/admin", tags=["Admin"])
+app.include_router(admin_router.router, tags=["Admin"])
 
 # 루트 엔드포인트 (상태 확인용)
 @app.get("/")
 async def root():
     return {"message": "PostgreSQL 연결 성공!"}
+
+@app.get("/routes")
+async def list_routes():
+    return [route.path for route in app.routes]
