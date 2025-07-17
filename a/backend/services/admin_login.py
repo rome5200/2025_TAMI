@@ -1,26 +1,26 @@
-# services/admin_service.py
+# backend/services/admin_login.py
 
-from firebase_admin import db
-from utils import verify_password
+from fastapi import APIRouter, HTTPException
+from sqlalchemy import select, Table, Column, String, MetaData
+from backend.core.database import database
+from backend.core.schemas import AdminLoginRequest
+from backend.util import verify_password
 
+router = APIRouter(prefix="/admin", tags=["Admin"])
 
-def get_admin_by_id(admin_id: str):
-    """Firebase에서 admin_id로 관리자 계정 조회"""
-    ref = db.reference(f"admins/{admin_id}")
-    return ref.get()
+@router.post("/login")
+async def admin_login(login_req: AdminLoginRequest):
+    query = "SELECT * FROM admins WHERE admin_id = :admin_id"
+    result = await database.fetch_one(query, values={"admin_id": login_req.admin_id})
 
+    if not result:
+        raise HTTPException(status_code=401, detail="존재하지 않는 아이디입니다.")
 
-def login_admin(admin_id: str, password: str):
-    """
-    관리자 로그인 처리
-    - Firebase에서 admin_id로 관리자 찾기
-    - 비밀번호 검증
-    """
-    admin = get_admin_by_id(admin_id)
-    if not admin:
-        return None
+    if not verify_password(login_req.admin_pw, result["admin_pw"]):
+        raise HTTPException(status_code=401, detail="비밀번호가 올바르지 않습니다.")
 
-    if not verify_password(password, admin.get("password_hash")):
-        return None
-
-    return admin
+    return {
+        "message": "로그인 성공",
+        "admin_name": result["admin_name"],
+        "token": "dummy-token"  # TODO: 실제 JWT 발급 가능
+    }
