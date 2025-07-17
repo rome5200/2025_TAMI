@@ -1,8 +1,8 @@
 # backend/routers/admin_login.py
 from fastapi import APIRouter, HTTPException
-from core.database import database
-from core.schemas import AdminLoginRequest
-from utils import verify_password
+from backend.core.database import database
+from backend.core.schemas import AdminLoginRequest
+from backend.util import verify_password
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 

@@ -2,9 +2,9 @@
 
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import select, Table, Column, String, MetaData
-from core.database import database
-from core.schemas import AdminLoginRequest
-from utils import verify_password
+from backend.core.database import database
+from backend.core.schemas import AdminLoginRequest
+from backend.util import verify_password
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 

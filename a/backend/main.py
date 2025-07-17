@@ -1,9 +1,12 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-
-from core.database import database
-from routers import admin_router
+from backend.core.database import database
+from backend.routers import admin_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
