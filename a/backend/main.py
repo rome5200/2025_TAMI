@@ -1,38 +1,31 @@
-# backend/main.py
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-import sqlite3
 
-app = FastAPI()
+from core.database import database
+from routers import admin_router
 
-# CORS 설정 (React와 통신 허용)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await database.connect()
+    yield
+    await database.disconnect()
+
+app = FastAPI(lifespan=lifespan)
+
+# CORS 미들웨어 등록 (프론트엔드 연결을 위한 설정)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React 앱 주소
+    allow_origins=["*"],  # 배포 시에는 실제 프론트 주소로 변경
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# SQLite로 가정 (간단한 예제)
-def get_user_by_username(username: str):
-    conn = sqlite3.connect("users.db")
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
-    user = cursor.fetchone()
-    conn.close()
-    return user
+# 관리자 로그인 라우터 등록
+app.include_router(admin_router.router, prefix="/admin", tags=["Admin"])
 
-@app.post("/login")
-async def login(request: Request):
-    data = await request.json()
-    username = data.get("username")
-
-    if not username:
-        raise HTTPException(status_code=400, detail="Username is required")
-
-    user = get_user_by_username(username)
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid username")
-
-    return {"message": "Login successful", "redirect": "/main"}
+# 루트 엔드포인트 (상태 확인용)
+@app.get("/")
+async def root():
+    return {"message": "PostgreSQL 연결 성공!"}
